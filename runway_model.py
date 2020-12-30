@@ -16,7 +16,7 @@ model = models.inception_v3(pretrained=True)
 
 config = {
     "image_path": None,
-    "layers": [model.Mixed_5c.branch3x3dbl_3],  ## change this 
+    "layers": [model.Mixed_6c.branch1x1],  ## change this 
     "octave_scale": 1.1,
     "num_octaves": 14,
     "iterations": 10,
@@ -34,11 +34,11 @@ def setup():
     name = "generate", 
     inputs={ 
         "image_path": text(), 
-        "octave_scale": number(step = 0.01, min = 1.0, max = 1.7), 
-        "num_octaves":number(step = 1, min = 1, max = 25),
-        "iterations" : number(step = 1, min = 1, max = 500),
-        "lr": number(step = 1e-4, min = 1e-9, max = 1e-2),
-        "max_rotation": number(step = 0.01, min = 0.0, max = 1.5)
+        "octave_scale": number(step = 0.01, min = 1.0, max = 1.7, default = 1.3), 
+        "num_octaves":number(step = 1, min = 1, max = 25, default = 5),
+        "iterations" : number(step = 1, min = 1, max = 500, default = 14),
+        "lr": number(step = 1e-4, min = 1e-9, max = 1e-1, default = 0.05),
+        "max_rotation": number(step = 0.1, min = 0.0, max = 1.5, default = 0.9)
         }, 
     outputs={ "image": image() }
 )
