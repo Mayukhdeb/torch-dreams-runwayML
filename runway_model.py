@@ -1,84 +1,62 @@
-# MIT License
+# runway_model.py
+import json
+from PIL import Image
+import numpy as np
+import torchvision.models as models
+from torch_dreams.dreamer import dreamer
 
-# Copyright (c) 2019 Runway AI, Inc
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-# =========================================================================
-
-# This example contains the minimum specifications and requirements
-# to port a machine learning model to Runway.
-
-# For more instructions on how to port a model to Runway, see the Runway Model
-# SDK docs at https://sdk.runwayml.com
-
-# RUNWAY
-# www.runwayml.com
-# hello@runwayml.com
-
-# =========================================================================
-
-# Import the Runway SDK. Please install it first with
-# `pip install runway-python`.
 import runway
-from runway.data_types import number, text, image
-from example_model import ExampleModel
+from runway.data_types import image, text, number
+"""
+to run server on localhost
+python runway_model.py
+"""
 
-# Setup the model, initialize weights, set the configs of the model, etc.
-# Every model will have a different set of configurations and requirements.
-# Check https://docs.runwayapp.ai/#/python-sdk to see a complete list of
-# supported configs. The setup function should return the model ready to be
-# used.
-setup_options = {
-    'truncation': number(min=1, max=10, step=1, default=5, description='Example input.'),
-    'seed': number(min=0, max=1000000, description='A seed used to initialize the model.')
+model = models.inception_v3(pretrained=True)
+
+config = {
+    "image_path": None,
+    "layers": [model.Mixed_5c.branch3x3dbl_3],  ## change this 
+    "octave_scale": 1.1,
+    "num_octaves": 14,
+    "iterations": 10,
+    "lr": 0.03,
+    "max_rotation": 0.5,
 }
-@runway.setup(options=setup_options)
-def setup(opts):
-    msg = '[SETUP] Ran with options: seed = {}, truncation = {}'
-    print(msg.format(opts['seed'], opts['truncation']))
-    model = ExampleModel(opts)
-    return model
 
-# Every model needs to have at least one command. Every command allows to send
-# inputs and process outputs. To see a complete list of supported inputs and
-# outputs data types: https://sdk.runwayml.com/en/latest/data_types.html
-@runway.command(name='generate',
-                inputs={ 'caption': text() },
-                outputs={ 'image': image(width=512, height=512) },
-                description='Generates a red square when the input text input is "red".')
-def generate(model, args):
-    print('[GENERATE] Ran with caption value "{}"'.format(args['caption']))
-    # Generate a PIL or Numpy image based on the input caption, and return it
-    output_image = model.run_on_input(args['caption'])
-    return {
-        'image': output_image
-    }
+@runway.setup
+def setup():
 
-if __name__ == '__main__':
-    # run the model server using the default network interface and ports,
-    # displayed here for convenience
-    runway.run(host='0.0.0.0', port=8000)
+    dreamy_boi = dreamer(model)
+    return  dreamy_boi
 
-## Now that the model is running, open a new terminal and give it a command to
-## generate an image. It will respond with a base64 encoded URI
-# curl \
-#   -H "content-type: application/json" \
-#   -d '{ "caption": "red" }' \
-#   localhost:8000/generate
+@runway.command(
+    name = "generate", 
+    inputs={ 
+        "image_path": text(), 
+        "octave_scale": number(step = 0.01, min = 1.0, max = 1.7), 
+        "num_octaves":number(step = 1, min = 1, max = 25),
+        "iterations" : number(step = 1, min = 1, max = 500),
+        "lr": number(step = 1e-4, min = 1e-9, max = 1e-2),
+        "max_rotation": number(step = 0.01, min = 0.0, max = 1.5)
+        }, 
+    outputs={ "image": image() }
+)
+def generate(dreamy_boi, input):
+
+    config["image_path"] = input["image_path"]
+    config["octave_scale"] = input["octave_scale"]
+    config["num_octaves"] = input["num_octaves"]
+    config["iterations"] = input["iterations"]
+    config["lr"] = input["lr"]
+    config["max_rotation"] = input["max_rotation"]
+    out = dreamy_boi.deep_dream(config)*255
+    out = Image.fromarray(out.astype(np.uint8))
+    return { "image": out }
+
+"""
+after running this, open runwayML and connect to localhost
+then enter text input: "images/sample_small.jpg"
+"""
+if __name__ == "__main__":
+     runway.run()
