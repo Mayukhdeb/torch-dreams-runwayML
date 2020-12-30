@@ -4,24 +4,21 @@ from PIL import Image
 import numpy as np
 import torchvision.models as models
 from torch_dreams.dreamer import dreamer
+from torch_dreams.utils import preprocess_numpy_img
 
 import runway
 from runway.data_types import image, text, number
+
 """
-to run server on localhost
-python runway_model.py
+works on torch_dreams v1.0.1
+for tests use: $ pip install git+https://github.com/Mayukhdeb/torch-dreams
+to run server on localhost: $ python runway_model.py
 """
 
 model = models.inception_v3(pretrained=True)
 
 config = {
-    "image_path": None,
     "layers": [model.Mixed_6c.branch1x1],  ## change this 
-    "octave_scale": 1.1,
-    "num_octaves": 14,
-    "iterations": 10,
-    "lr": 0.03,
-    "max_rotation": 0.5,
 }
 
 @runway.setup
@@ -33,7 +30,7 @@ def setup():
 @runway.command(
     name = "generate", 
     inputs={ 
-        "image_path": text(), 
+        "image": image(), 
         "octave_scale": number(step = 0.01, min = 1.0, max = 1.7, default = 1.3), 
         "num_octaves":number(step = 1, min = 1, max = 25, default = 5),
         "iterations" : number(step = 1, min = 1, max = 500, default = 14),
@@ -44,7 +41,7 @@ def setup():
 )
 def generate(dreamy_boi, input):
 
-    config["image_path"] = input["image_path"]
+    config["image"] = preprocess_numpy_img(np.array(input["image"]).astype(np.float32)/255.0)
     config["octave_scale"] = input["octave_scale"]
     config["num_octaves"] = input["num_octaves"]
     config["iterations"] = input["iterations"]
@@ -56,7 +53,6 @@ def generate(dreamy_boi, input):
 
 """
 after running this, open runwayML and connect to localhost
-then enter text input: "images/sample_small.jpg"
 """
 if __name__ == "__main__":
      runway.run()
