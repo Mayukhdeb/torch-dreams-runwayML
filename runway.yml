@@ -1,6 +1,6 @@
 # Specify the version of the runway.yml spec.
 version: 0.1
-python: 3.8
+python: 3.6
 entrypoint: python runway_model.py
 cuda: 10.2
 # "tensorflow" and "pytorch", installing Tensorflow v1.12 and Pytorch v1.0
