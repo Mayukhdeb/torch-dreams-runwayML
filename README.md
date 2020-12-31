@@ -1,4 +1,7 @@
 # torch-dreams :handshake: runwayML
+<div style="text-align:center">
+<img src = "images/screenshot.png" width = "50%">
+</div>
 
 ## How to run
 
