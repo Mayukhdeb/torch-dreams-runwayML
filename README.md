@@ -9,6 +9,7 @@
     ```
     $ git clone https://github.com/Mayukhdeb/torch-dreams-runwayML.git
     $ cd torch-dreams-runwayML
+    $ pip install -r requirements.txt
     ```
 
 1. Start the server with: 
