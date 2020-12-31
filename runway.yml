@@ -6,7 +6,7 @@ cuda: 10.2
 # "tensorflow" and "pytorch", installing Tensorflow v1.12 and Pytorch v1.0
 framework: pytorch
 spec:
-    cpu: False
+    cpu: True
     gpu: True
 files:
     # All files in the root project directory will be copied to the Docker image
