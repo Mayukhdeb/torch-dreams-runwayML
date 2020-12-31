@@ -34,7 +34,9 @@ Starting model server at http://0.0.0.0:9000...
 
 3. Select the image you want to work with.
 
-4. Play around with the inference parameters and have fun!
+4. Play around with the inference parameters and have fun! 
+
+Try reading the [torch-dreams docs](https://app.gitbook.com/@mayukh09/s/torch-dreams/) to create fancier visualizations. 
 
 ## Architecture
 Each Runway model consists of two special files:
