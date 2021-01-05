@@ -37,15 +37,15 @@ def generate_mask(model, image, transforms = seg_transforms):
     out= cv2.resize(om, (image.shape[1], image.shape[0]))
     return out
 
-model = models.inception_v3(pretrained=True)
+model = models.googlenet(pretrained=True)
 
-def custom_func_combined(layer_outputs):
-    loss = layer_outputs[0][7].mean() + layer_outputs[1][88].mean()
+def custom_func(layer_outputs):
+    loss = layer_outputs[0][7].mean() 
     return loss
 
 config = {
-    "layers": [model.Mixed_6c.branch1x1.conv, model.Mixed_6b.branch7x7dbl_2],  ## change this 
-    "custom_func": [custom_func_combined]
+    "layers": [model.inception4d],  ## change this 
+    "custom_func": [custom_func]
 }
 
 
@@ -59,9 +59,9 @@ def setup():
     name = "generate", 
     inputs={ 
         "image": image(), 
-        "octave_scale": number(step = 0.01, min = 1.0, max = 1.7, default = 1.3), 
+        "octave_scale": number(step = 0.05, min = 1.0, max = 1.7, default = 1.3), 
         "num_octaves":number(step = 1, min = 1, max = 25, default = 5),
-        "iterations" : number(step = 1, min = 1, max = 500, default = 14),
+        "iterations" : number(step = 1, min = 1, max = 100, default = 14),
         "lr": number(step = 1e-4, min = 1e-9, max = 1e-1, default = 0.05),
         "max_rotation": number(step = 0.1, min = 0.0, max = 1.5, default = 0.9)
         }, 
