@@ -32,7 +32,7 @@ runway-python==0.6.1
 scipy==1.5.4
 six==1.15.0
 torch==1.7.1
-torch-dreams==1.0.0
+torch-dreams==1.1.0
 torchvision==0.8.2
 tqdm==4.55.0
 typing-extensions==3.7.4.3

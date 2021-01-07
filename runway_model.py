@@ -17,6 +17,7 @@ to run server on localhost: $ python runway_model.py
 
 
 config = {
+    "image_path": None,
     "layers": [model.inception4b],  
     "custom_func": [None]
 }
