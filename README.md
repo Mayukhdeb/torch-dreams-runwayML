@@ -17,12 +17,6 @@
     $ python runway_model.py
     ```
 
-    Or if you want to use the segmentation mask, use:
-
-    ```
-    $ python runway_model_with_segmentation.py
-    ```
-
 You should see an output similar to this:
 ```
 Initializing model...
