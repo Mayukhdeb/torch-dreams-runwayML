@@ -20,7 +20,7 @@ files:
 build_steps:
     # - apt-get update
     # - apt install -y libgl1-mesa-glx
-    # - pip install -r requirements.txt --ignore-installed
+    - pip install -r requirements.txt 
     # The if_gpu and if_cpu directives can be used to run build steps
     # conditionally depending on the build environment.
     - if_gpu: echo "Building in a GPU environment..."
