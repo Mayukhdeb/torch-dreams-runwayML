@@ -1,4 +1,3 @@
-# runway_model.py
 import numpy as np
 from PIL import Image
 from torch_dreams.dreamer import dreamer
