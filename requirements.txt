@@ -37,7 +37,7 @@ torchvision==0.8.2
 tqdm==4.55.0
 typing-extensions==3.7.4.3
 Unidecode==1.1.2
-urllib3==1.26.2
+urllib3==1.26.5
 Werkzeug==1.0.1
 zope.event==4.5.0
 zope.interface==5.2.0
